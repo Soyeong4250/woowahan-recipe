@@ -22,5 +22,6 @@ public class AlarmEventHandler {
     public void createAlarm(AlarmEvent e) {
         AlarmEntity alarm = alarmRepository.save(e.getAlarm());
         log.info(alarm.getAlarmType() + "is created");
+        throw new RuntimeException();
     }
 }
