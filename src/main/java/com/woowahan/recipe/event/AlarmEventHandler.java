@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Async
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class AlarmEventHandler {
 
     private final AlarmRepository alarmRepository;
