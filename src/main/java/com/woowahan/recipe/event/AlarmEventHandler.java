@@ -11,16 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Async
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class AlarmEventHandler {
 
     private final AlarmRepository alarmRepository;
 
     @EventListener
-    @Async
     public void createAlarm(AlarmEvent e) {
         AlarmEntity alarm = alarmRepository.save(e.getAlarm());
         log.info(alarm.getAlarmType() + "is created");
+        throw new RuntimeException();
     }
 }
