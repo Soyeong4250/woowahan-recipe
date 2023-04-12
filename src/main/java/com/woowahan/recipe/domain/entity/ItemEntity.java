@@ -4,6 +4,8 @@ package com.woowahan.recipe.domain.entity;
 import com.woowahan.recipe.exception.AppException;
 import com.woowahan.recipe.exception.ErrorCode;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -19,8 +21,8 @@ import static javax.persistence.FetchType.LAZY;
 @Setter
 @Builder
 @Entity
-//@SQLDelete(sql = "UPDATE item_entity SET deleted_date = current_timestamp WHERE item_id = ?")
-//@Where(clause = "deleted_date is null")
+@SQLDelete(sql = "UPDATE item_entity SET deleted_date = current_timestamp WHERE item_id = ?")
+@Where(clause = "deleted_date is null")
 public class ItemEntity extends BaseEntity{
 
     @Id
@@ -62,10 +64,6 @@ public class ItemEntity extends BaseEntity{
     public void addItem() {};
 
     /* 비지니스 로직 */
-    public void increaseStock(int quantity) {
-        this.itemStock += quantity;
-    }
-
     public void decreaseStock(int quantity) {
          int restStock = this.itemStock -= quantity;
          if (restStock < 0) {
