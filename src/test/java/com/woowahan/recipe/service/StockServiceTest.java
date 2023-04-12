@@ -1,27 +1,33 @@
 package com.woowahan.recipe.service;
 
-import com.woowahan.recipe.domain.entity.ItemEntity;
 import com.woowahan.recipe.domain.entity.StockEntity;
-import com.woowahan.recipe.repository.ItemRepository;
 import com.woowahan.recipe.repository.StockRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class StockServiceTest {
     @Autowired
-    private final StockRepository stockRepository;
+    private StockService stockService;
     @Autowired
-    private final ItemRepository itemRepository;
+    private StockRepository stockRepository;
 
-    @Autowired
-    public StockServiceTest(StockRepository stockRepository, ItemRepository itemRepository) {
-        this.stockRepository = stockRepository;
-        this.itemRepository = itemRepository;
-    }
 
-    @Test
+    /*@BeforeEach
+    void setUp() {
+        StockEntity stock = stockRepository.findById(84L).get();
+    }*/
+
+
+    /*@Test
     void 재고_옮기기() throws Exception {
         // given
         for (Long i = 1L; i <= 116L; i++) {
@@ -33,5 +39,30 @@ public class StockServiceTest {
             item.setStock(newStock);
             itemRepository.save(item);
         }
+    }*/
+
+    @Test
+    @Transactional
+    void 동시요청_100개() throws Exception {
+        // given
+        int threadCount = 100;
+        // 멀티쓰레드 이용
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        // when
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    stockService.decrease(84L, 1);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await();
+        // then
+        StockEntity stock = stockRepository.findById(84L).get();
+        assertThat(stock.getQuantity()).isEqualTo(200);
+
     }
 }
