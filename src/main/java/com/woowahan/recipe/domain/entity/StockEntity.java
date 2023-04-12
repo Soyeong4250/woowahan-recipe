@@ -36,4 +36,8 @@ public class StockEntity {
         }
         this.quantity -= quantity;
     }
+
+    public void increase(int quantity) {
+        this.quantity += quantity;
+    }
 }
