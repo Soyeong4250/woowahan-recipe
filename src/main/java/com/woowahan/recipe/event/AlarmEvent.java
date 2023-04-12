@@ -4,7 +4,9 @@ import com.woowahan.recipe.domain.entity.AlarmEntity;
 import com.woowahan.recipe.domain.entity.AlarmType;
 import com.woowahan.recipe.domain.entity.RecipeEntity;
 import com.woowahan.recipe.domain.entity.UserEntity;
+import lombok.Getter;
 
+@Getter
 public class AlarmEvent {
     private AlarmEntity alarm;
 
